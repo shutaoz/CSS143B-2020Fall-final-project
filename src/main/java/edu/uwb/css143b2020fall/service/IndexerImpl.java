@@ -10,7 +10,7 @@ public class IndexerImpl implements Indexer {
         Map<String, List<List<Integer>>> indexes = new HashMap<>();
         // add your code
 
-        if(docs.isEmpty())    return null;
+        if(docs.isEmpty() || docs.get(0) == "")    return indexes;
 
         for(int i = 0; i < getWords(docs).size(); ++i){
             indexes.put(getWords(docs).get(i), getLocations(getWords(docs).get(i), docs));
