@@ -25,6 +25,7 @@ public class SearcherImpl implements Searcher {
         for(int i = 0; i < temp.length; ++i)
             tempList.add(temp[i]);
 
+        //if this test pass, that means all the words in the input are somewhere inside the map
         if(!isInside(temp, index))
             return result;
 
@@ -61,7 +62,21 @@ public class SearcherImpl implements Searcher {
         if(temp.length > 1){
 
         //a generated list of indices
+
             List<List<Integer>> placeHolder = new LinkedList<>();
+
+            //find indices of all the words
+            for(int i = 0; i < temp.length; ++i){
+                placeHolder.add(findIndices(temp[i], index));
+            }
+
+            result = findSharedDocs(placeHolder);
+
+            result = inRightOrder(temp, result, index);
+
+            return result;
+
+
 
 
 
@@ -99,10 +114,11 @@ public class SearcherImpl implements Searcher {
 
      */
 
-    public List<Integer> findIndices(String uWord, List<List<Integer>> doc){
+    public List<Integer> findIndices(String uWord, Map<String, List<List<Integer>>> index){
         List<Integer> indices = new LinkedList<>();
-        for(int i = 0; i < doc.size(); ++i){
-            if(!doc.get(i).isEmpty())
+        //?
+        for(int i = 0; i < index.get(uWord).size(); ++i){
+            if(!index.get(uWord).get(i).isEmpty())
                 indices.add(i);
 
         }
@@ -140,6 +156,7 @@ public class SearcherImpl implements Searcher {
         Set<Integer> setA = new HashSet<>();
         Set<Integer> setB = new HashSet<>();
 
+
         for(int i = 0; i < listA.size(); ++i)
             setA.add(listA.get(i));
 
@@ -149,17 +166,23 @@ public class SearcherImpl implements Searcher {
 
         setA.retainAll(setB);
 
-        return (Integer[])setA.toArray();
+        Integer[] result = new Integer[setA.toArray().length];
+        for(int i = 0; i < setA.toArray().length; ++i){
+            result[i] = (Integer) setA.toArray()[i];
+        }
+        return result;
 
     }
 
+    //words passed in are the searched keywords
+    //uWord is created to facilitate the index finding process
+    //another refinement step to find docs that have the words in the right order
+    public List<Integer> inRightOrder(String[] words, List<Integer> commonDoc, Map<String, List<List<Integer>>> index){
 
-    public boolean isRightOrder(String[] words, List<String> uWord, List<Integer> doc){
-        boolean flag = true;
-        for(int i = 0; i < uWord.size() - 1; ++i){
-            if((uWord.indexOf(words[i]) - uWord.indexOf(words[i + 1])) != (doc.indexOf(words[i]) - doc.indexOf(i + 1)))
-                flag = false;
+        for(int i = 0; i < (words.length - 1); ++i){
+            if(-1 != (index.get(words[i]).get(commonDoc.get(i)).indexOf(words[i]) - index.get(words[i + 1]).get(commonDoc.get(i + 1)).indexOf(words[i + 1])))
+                commonDoc.remove((Integer)i);
         }
-        return flag;
+        return commonDoc;
     }
 }
