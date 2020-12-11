@@ -21,6 +21,10 @@ public class SearcherImpl implements Searcher {
 
         String[] temp = keyPhrase.trim().split("\\s+");
 
+        List<String> tempList = new LinkedList<>();
+        for(int i = 0; i < temp.length; ++i)
+            tempList.add(temp[i]);
+
         if(!isInside(temp, index))
             return result;
 
@@ -56,6 +60,9 @@ public class SearcherImpl implements Searcher {
 
         if(temp.length > 1){
 
+        //a generated list of indices
+            List<List<Integer>> placeHolder = new LinkedList<>();
+
 
 
         }
@@ -76,6 +83,8 @@ public class SearcherImpl implements Searcher {
         return flag;
     }
 
+    /*
+    //check if every word is inside a specific document
     public boolean isInsideDoc(String[] uWord, List<Integer> doc){
         boolean flag = true;
         for(int i = 0; i < uWord.length; ++i){
@@ -88,7 +97,69 @@ public class SearcherImpl implements Searcher {
 
     }
 
-    public boolean isRightOrder(String[] uWord, List<Integer> doc){
+     */
 
+    public List<Integer> findIndices(String uWord, List<List<Integer>> doc){
+        List<Integer> indices = new LinkedList<>();
+        for(int i = 0; i < doc.size(); ++i){
+            if(!doc.get(i).isEmpty())
+                indices.add(i);
+
+        }
+        return indices;
+    }
+
+    public List<Integer> findSharedDocs(List<List<Integer>> indices){
+        List<Integer> resList = new LinkedList<>();
+        Integer[] resArray = new Integer[indices.size()];
+
+        //compare the first two index lists
+        //a one step process
+        resArray = findCommon(indices.get(0), indices.get(1));
+
+        //conversion into a list to be used in the findCommon method
+        for(int i = 0; i < resArray.length; ++i)
+            resList.add(resArray[i]);
+
+        for(int i = 2; i < indices.size() - 1; ++i){
+            resArray = findCommon(resList, indices.get(i));
+            //?
+            resList.removeAll(resList);
+
+            for(int j = 0; j < resArray.length; ++j)
+                resList.add(resArray[j]);
+
+
+        }
+        return resList;
+
+
+    }
+
+    public Integer[] findCommon(List<Integer> listA, List<Integer> listB){
+        Set<Integer> setA = new HashSet<>();
+        Set<Integer> setB = new HashSet<>();
+
+        for(int i = 0; i < listA.size(); ++i)
+            setA.add(listA.get(i));
+
+
+        for(int i = 0; i < listB.size(); ++i)
+            setB.add(listB.get(i));
+
+        setA.retainAll(setB);
+
+        return (Integer[])setA.toArray();
+
+    }
+
+
+    public boolean isRightOrder(String[] words, List<String> uWord, List<Integer> doc){
+        boolean flag = true;
+        for(int i = 0; i < uWord.size() - 1; ++i){
+            if((uWord.indexOf(words[i]) - uWord.indexOf(words[i + 1])) != (doc.indexOf(words[i]) - doc.indexOf(i + 1)))
+                flag = false;
+        }
+        return flag;
     }
 }
