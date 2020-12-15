@@ -34,6 +34,43 @@ public class IntegrationTest {
         }
     }
 
+    @Test
+    public void testIntegrationEC1() {
+        List<TestCase> cases = getTestCaseEC1();
+        for (TestCase testCase : cases) {
+            List<Integer> actual = searcher.search(
+                    testCase.target,
+                    indexer.index(testCase.documents)
+            );
+            assertEquals(testCase.expect, actual);
+        }
+    }
+
+    @Test
+    public void testIntegrationEC2() {
+        List<TestCase> cases = getTestCaseEC2();
+        for (TestCase testCase : cases) {
+            List<Integer> actual = searcher.search(
+                    testCase.target,
+                    indexer.index(testCase.documents)
+            );
+            assertEquals(testCase.expect, actual);
+        }
+    }
+
+    @Test
+    public void testIntegrationEC3() {
+        List<TestCase> cases = getTestCaseEC3();
+        for (TestCase testCase : cases) {
+            List<Integer> actual = searcher.search(
+                    testCase.target,
+                    indexer.index(testCase.documents)
+            );
+            assertEquals(testCase.expect, actual);
+        }
+    }
+
+
     private List<TestCase> getTestCase() {
         List<String> documents = Util.getDocumentsForIntTest();
 
@@ -107,6 +144,136 @@ public class IntegrationTest {
 
         return testCases;
     }
+
+    private List<TestCase> getTestCaseEC1() {
+        List<String> documents = new ArrayList<>(
+                Arrays.asList(
+                        "drink water water drink",
+                        "drink",
+                        "water water",
+                        "juice",
+                        "drink juice juice"
+                )
+        );
+
+        List<TestCase> testCases = new ArrayList<>(Arrays.asList(
+                new TestCase(
+                        documents,
+                        "www",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "aaa bbb",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "ccc",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "xxx yyy zzz",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "z",
+                        Util.emptyResult()
+                )
+
+        ));
+
+        return testCases;
+    }
+
+    private List<TestCase> getTestCaseEC2() {
+        List<String> documents = new ArrayList<>(
+                Arrays.asList(
+                        "eat veggies",
+                        "veggies",
+                        "meat veggies",
+                        "eat",
+                        "meat veggies meat"
+                )
+        );
+
+        List<TestCase> testCases = new ArrayList<>(Arrays.asList(
+                new TestCase(
+                        documents,
+                        "rr r ss",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "ggg g",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "hh hhh",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "jjj j jj",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "uu u",
+                        Util.emptyResult()
+                )
+
+        ));
+
+        return testCases;
+    }
+
+    private List<TestCase> getTestCaseEC3() {
+        List<String> documents = new ArrayList<>(
+                Arrays.asList(
+                        "cook meat meat veggies",
+                        "cook fruit",
+                        "fruit meat",
+                        "veggies meat fruit cook",
+                        "cook cook cook"
+                )
+        );
+
+        List<TestCase> testCases = new ArrayList<>(Arrays.asList(
+                new TestCase(
+                        documents,
+                        "",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "s ss sss ssss",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "eee",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "ee e fff",
+                        Util.emptyResult()
+                ),
+                new TestCase(
+                        documents,
+                        "l",
+                        Util.emptyResult()
+                )
+
+        ));
+
+        return testCases;
+    }
+
 
     private class TestCase {
         private List<String> documents;
